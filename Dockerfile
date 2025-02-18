@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # 애플리케이션 코드 복사
-COPY . .
+COPY ./ /usr/src/app/
 
 # FastAPI 실행 (Uvicorn 사용)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

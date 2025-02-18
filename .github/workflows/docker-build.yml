@@ -20,7 +20,7 @@ jobs:
         run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t kimdaewhi/fastapi-app:latest .
+        run: docker build -t kimdaewhi/fastapi-app:latest -f app/Dockerfile app
 
       - name: Push Docker Image to Docker Hub
         run: docker push kimdaewhi/fastapi-app:latest
