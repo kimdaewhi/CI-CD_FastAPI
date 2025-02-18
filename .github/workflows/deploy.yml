@@ -23,4 +23,4 @@ jobs:
       # kubectl 명령어를 사용하여 최신  Docker Image로 적용
     - name: Update Deployment Image
       run: |
-        kubectl set image deployment/nginx-deployment nginx=mydockerhubusername/myproject-frontend:latest -n default
+        kubectl set image deployment/nginx-deployment nginx=kimdaewhi/fastapi-app:latest -n default
