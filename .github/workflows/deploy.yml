@@ -1,0 +1,24 @@
+name: Deploy FastAPI
+
+on:
+  push:
+    branches:
+      - main # main 브랜치에 push될 때 자동 실행
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v3
+      
+      # GitHub Action을 실행할 때, 해당 레포지토리를 체크아웃, Github Secrets에 저장된 KUBE_CONFIG을 사용하여 kubectl을 설정
+    - name: Set up Kubeconfig
+      run: |
+        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+
+      # kubectl 명령어를 사용하여 최신  Docker Image로 적용용
+    - name: Update Deployment Image
+      run: |
+        kubectl set image deployment/nginx-deployment nginx=mydockerhubusername/myproject-frontend:latest -n default
