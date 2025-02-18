@@ -13,6 +13,9 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Check Files & Directories  # 🛠 문제 해결을 위한 추가 코드
+        run: ls -R
+
       - name: Login to Docker Hub
         env:
           DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
@@ -20,7 +23,7 @@ jobs:
         run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
 
       - name: Build Docker Image
-        run: docker build -t kimdaewhi/fastapi-app:latest -f app/Dockerfile app
+        run: docker build -t kimdaewhi/fastapi-app:latest .  # 🛠 app/ 폴더가 없을 경우 수정
 
       - name: Push Docker Image to Docker Hub
         run: docker push kimdaewhi/fastapi-app:latest
