@@ -16,9 +16,11 @@ jobs:
       # GitHub Action을 실행할 때, 해당 레포지토리를 체크아웃, Github Secrets에 저장된 KUBE_CONFIG을 사용하여 kubectl을 설정
     - name: Set up Kubeconfig
       run: |
+        mkdir -p $HOME/.kube  # 폴더가 없으면 생성
+        touch $HOME/.kube/config  # 빈 파일 생성 (에러 방지)
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
-      # kubectl 명령어를 사용하여 최신  Docker Image로 적용용
+      # kubectl 명령어를 사용하여 최신  Docker Image로 적용
     - name: Update Deployment Image
       run: |
         kubectl set image deployment/nginx-deployment nginx=mydockerhubusername/myproject-frontend:latest -n default
