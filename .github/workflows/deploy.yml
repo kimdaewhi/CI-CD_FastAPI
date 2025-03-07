@@ -3,24 +3,34 @@ name: Deploy FastAPI
 on:
   push:
     branches:
-      - main # main 브랜치에 push될 때 자동 실행
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
-      
-      # GitHub Action을 실행할 때, 해당 레포지토리를 체크아웃, Github Secrets에 저장된 KUBE_CONFIG을 사용하여 kubectl을 설정
-    - name: Set up Kubeconfig
-      run: |
-        mkdir -p $HOME/.kube  # 폴더가 없으면 생성
-        touch $HOME/.kube/config  # 빈 파일 생성 (에러 방지)
-        echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
 
-      # kubectl 명령어를 사용하여 최신  Docker Image로 적용
-    - name: Update Deployment Image
-      run: |
-        kubectl set image deployment/nginx-deployment nginx=kimdaewhi/fastapi-app:latest -n default
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "$KUBE_CONFIG" > $HOME/.kube/config
+          chmod 600 $HOME/.kube/config
+        env:
+          KUBE_CONFIG: ${{ secrets.KUBE_CONFIG }}
+
+      - name: Create Deployment if not exists
+        run: |
+          kubectl get deployment nginx-deployment -n default || kubectl apply -f deployment.yaml
+
+      - name: Update Deployment Image
+        run: |
+          kubectl set image deployment/nginx-deployment nginx=kimdaewhi/fastapi-app:latest -n default

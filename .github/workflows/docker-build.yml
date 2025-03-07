@@ -10,20 +10,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout Repository  # ✅ GitHub Repo 코드 가져오기
         uses: actions/checkout@v3
 
-      - name: Check Files & Directories  # 🛠 문제 해결을 위한 추가 코드
+      - name: Check Files & Directories  # ✅ 디버깅을 위한 파일 리스트 확인
         run: ls -R
 
-      - name: Login to Docker Hub
+      - name: Login to Docker Hub  # ✅ Docker Hub 로그인
+        run: |
+          echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
         env:
-          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}  # act 실행 시 환경변수로 전달 필요
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build Docker Image
-        run: docker build -t kimdaewhi/fastapi-app:latest .  # 🛠 app/ 폴더가 없을 경우 수정
+      - name: Build Docker Image  # ✅ Docker 이미지 빌드
+        run: docker build -t kimdaewhi/fastapi-app:latest .
 
-      - name: Push Docker Image to Docker Hub
+      - name: Push Docker Image to Docker Hub  # ✅ Docker Hub에 푸시
         run: docker push kimdaewhi/fastapi-app:latest
